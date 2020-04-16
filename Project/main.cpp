@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Euklides.h"
 
 using namespace std;
 
@@ -15,7 +16,8 @@ int main()
 
         switch(option){
         case 1:
-
+            cout << "\n------ALGORYTM AUKLIDESA------" << endl;
+            Euklides::enterValues();
             break;
         case 2:
 
