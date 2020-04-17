@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Euklides.h"
-#include "NaiwnyPierwszosc.h"
+#include "NaivePrime.h"
 #include <conio.h>
 #include <cstdlib>
 
@@ -24,7 +24,7 @@ int main()
             break;
         case 2:
             cout << "\n------NAIWNY ALGORYTM SPRAWDZANIA PIERWSZOSCI LICZB------" << endl;
-            NaiwnyPierwszosc::enterValue();
+            NaivePrime::enterValue();
             break;
         case 3:
 

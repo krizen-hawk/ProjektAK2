@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include "NaiwnyPierwszosc.h"
+#include "NaivePrime.h"
 
 using namespace std;
 // algorytm polega na dzieleniu liczby a przez liczby z zakresu 2 do sqrt(a) i badaniu reszty
@@ -8,20 +8,20 @@ using namespace std;
 // to 0 to nie jest to liczba pierwsza
 // Wystarczy przebadać podzielność p  przez liczby z przedziału [ 2, [ √p  ] ], aby wykluczyć
 // liczby złożone.
-void NaiwnyPierwszosc::enterValue(){
+void NaivePrime::enterValue(){
     int a;
     cout << "Sprawdzane b\251dzi\251 czy dana liczba jest liczb\245 pierwsz\245" << endl;
     cout << "Podaj liczb\251: ";
     cin >> a;
-    int temp = CzyPierwsza(a);
+    int temp = checkPrime(a);
 
     if ( temp == 1 ) cout << "\nLiczba "<< a <<" JEST liczb\245 pierwsz\245!\n\n ";
     if ( temp == 0 ) cout << "\nLiczba "<< a <<" NIE JEST liczb\245 pierwsz\245!\n\n ";
 }
 
-int NaiwnyPierwszosc::CzyPierwsza(int a){
+int NaivePrime::checkPrime(int a){
 
-    int pierwiastek=sqrt(a);
+    int root=sqrt(a);
 
     asm("\
         # 8(%ebp) - zmienna a                                                   \n\
