@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Euklides.h"
 #include "NaivePrime.h"
+#include "ChineseTestPrime.h"
 #include <conio.h>
 #include <cstdlib>
 
@@ -27,7 +28,8 @@ int main()
             NaivePrime::enterValue();
             break;
         case 3:
-
+            cout << "\n---------CHINSKI TEST PIERWSZOSCI---------" << endl;
+            ChineseTestPrime::enterValue();
             break;
         case 4:
 
