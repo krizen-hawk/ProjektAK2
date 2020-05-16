@@ -1,9 +1,11 @@
 #include <iostream>
+#include <conio.h>
+#include <cstdlib>
 #include "Euklides.h"
 #include "NaivePrime.h"
 #include "ChineseTestPrime.h"
-#include <conio.h>
-#include <cstdlib>
+#include "LittleFermat.h"
+
 
 using namespace std;
 
@@ -32,7 +34,8 @@ int main()
             ChineseTestPrime::enterValue();
             break;
         case 4:
-
+            cout << "\n---------MALE TWIERDZENIE FERMATA---------" << endl;
+            LittleFermat::enterValue();
             break;
 
         case 0:
