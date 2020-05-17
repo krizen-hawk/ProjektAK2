@@ -23,7 +23,9 @@ void LittleFermat::enterValue()
     cout << "Algorytm ten przydatny jest do sprawdzania pierwszosci duzych liczb (np. wiekszych od 1000)\n";
     cout << "Podaj liczbe: ";
     cin >> num;
+    cout << endl;
 
+    if(num == 1){ cout << "Liczba 1 nie jest liczba pierwsza" << endl; return;}
     if(num == 2){ cout << "Liczba 2 jest liczba pierwsza" << endl; return;}
 
     //wywolanie funkcji odpowedzialnej za kontrole algorytmu Malego Twierdzenia Fermata
@@ -119,7 +121,7 @@ asm("\
     #     for (int i = 1; i <= 10; i++)                                               \n\
     #     {                                                                           \n\
     #        a = generateRandomNumber(2, num - 1);                                    \n\
-    #        if ((NWD(num, a) != 1) || (powerModuloF(a, num - 1, num) != 1))          \n\
+    #        if ((NWD(num, a) != 1) || (powerModuloF(num - 1, num, a) != 1))          \n\
     #        {                                                                        \n\
     #            result = 0;                                                          \n\
     #            break;                                                               \n\
@@ -151,7 +153,7 @@ asm("\
                 movl %eax, -16(%ebp)                                                  \n\
                 addl $8, %esp              # wyrownanie stosu                         \n\
                                                                                       \n\
-         # Wywolanie funkcji powerModuloF(a, num - 1, num)                            \n\
+         # Wywolanie funkcji powerModuloF(num - 1, num, a)                            \n\
          # zwrocony wynik zapisany bedzie w zmiennej pomocniczej d                    \n\
                 pushl 8(%ebp)                                                         \n\
                 pushl -8(%ebp)                                                        \n\

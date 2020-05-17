@@ -1,45 +1,90 @@
 #include <iostream>
-#include "ChineseTestPrime.h"
-
-extern "C" {int multiplicationModulo(int num1, int num2, int modNum);}
-extern "C" {int powerModulo(int exponent, int modNum);}
+#include <time.h>
+#include <cstdlib>
+#include "MillerRabin.h"
 
 using namespace std;
 
-void ChineseTestPrime::enterValue()
+extern "C" {unsigned int generateRandomNumberMR(unsigned int a, unsigned int b);}
+extern "C" {unsigned int multiplicationModuloMR(unsigned int num1,unsigned int num2, unsigned int modNum);}
+extern "C" {unsigned int powerModuloMR(unsigned int exponent, unsigned int modNum, unsigned int random);}
+
+
+void MillerRabin::enterValue()
 {
-    int num;
-    cout << "Podaj liczbe: ";
-    cin >> num;
-    cout << endl;
-    if(num == 2){
-        cout << "Liczba 2 jest liczba pierwsza" << endl;
-        return;
-    }
-    int result = powerModulo(num, num);
-    if(result == 2)
-        cout << "Liczba " << num << " jest liczba pierwsza" << endl;
-    else
-        cout << "Liczba " << num << " nie jest liczba pierwsza" << endl;
+      srand(time(NULL));
+
+      int a, d, num, x, s = 0, n;
+      int t = 1;
+
+      cout << "Podaj liczbe: ";
+      cin >> num;
+      cout << "Podaj ilosc powtorzen testu: ";
+      cin >> n;
+      cout << endl;
+
+      if(num == 1){ cout << "Liczba 1 nie jest liczba pierwsza" << endl; return;}
+      if(num == 2){ cout << "Liczba 2 jest liczba pierwsza" << endl; return;}
+
+      for(d = num-1; d%2==0; s++) d=d/2;
+
+      for(int i=1; i <= n; i++ )
+      {
+            a = generateRandomNumberMR (2, num - 2);
+            x = powerModuloMR (d, num, a);
+
+            if((x == 1)||(x == num - 1)) continue;
+
+            for(int j = 1; (j < s) && (x != num-1); j++)
+            {
+              x = multiplicationModuloMR (x, x, num);
+              if(x == 1)
+              {
+                t = 0;
+                break;
+              }
+            }
+
+            if(t == 0) break;
+
+            if(x != num-1)
+            {
+              t = 0;
+              break;
+            }
+      }
+
+    if(t == 1)     cout << "Liczba " << num << " jest liczba pierwsza" << endl;
+    else           cout << "Liczba " << num << " nie jest liczba pierwsza" << endl;
+
 }
 
-// Implementacja funkcji powerModulo
+//funkcja generuje losowa liczbe z zakresu <a,b>
+unsigned int generateRandomNumberMR(unsigned int a, unsigned int b)
+{
+    return (rand()%(b-a+1))+a;
+}
+
+
+// Implementacja funkcji powerModuloMR
 asm("\
-        .global _powerModulo                                                            \n\
-        _powerModulo:                                                                   \n\
+        .global _powerModuloMR                                                          \n\
+        _powerModuloMR:                                                                 \n\
         pushl %ebp              # zabezpieczenie starego %ebp                           \n\
         movl %esp, %ebp         # nowy %ebp zawiera aktualny wsk. stosu                 \n\
                                                                                         \n\
         # 8(%ebp) - parametr exponent                                                   \n\
         # 12(%ebp) - parametr modNum                                                    \n\
+        # 16(%ebp) - parametr random                                                    \n\
         # -4(%ebp) - zmienna lokalna bitMask                                            \n\
         # -8(%ebp) - zmienna lokalna rest - reszta z kolejnych poteg 2 mod modNum       \n\
         # -12(%ebp) - zmienna lokalna d - pomocnicza                                    \n\
                                                                                         \n\
         # Rezerwacja miejsca na zmienne lokalne                                         \n\
         pushl $1                # bitMask                                               \n\
-        pushl $2                # rest                                                  \n\
+        pushl 16(%ebp)          # rest - zapis wylosowanej liczby                       \n\
         pushl $1                # d                                                     \n\
+                                                                                        \n\
                                                                                         \n\
         while_loop2:                                                                    \n\
         cmpl $0, -4(%ebp)       # jesli bitMask = 0 -> wyjscie                          \n\
@@ -50,7 +95,7 @@ asm("\
             cmpl $0, %eax                                                               \n\
             je end_loop_if2                                                             \n\
                                                                                         \n\
-                # Wywolanie funkcji multiplicationModulo(d, rest, exponent)             \n\
+                # Wywolanie funkcji multiplicationModuloF(d, rest, exponent)            \n\
                 # zwrocony wynik zapisany w zmiennej pomocniczej d                      \n\
                 pushl 12(%ebp)                                                          \n\
                 pushl -8(%ebp)                                                          \n\
@@ -61,7 +106,7 @@ asm("\
                                                                                         \n\
             end_loop_if2:                                                               \n\
                                                                                         \n\
-            # Wywolanie funkcji multiplicationModulo(rest, rest, exponent)              \n\
+            # Wywolanie funkcji multiplicationModuloF(rest, rest, exponent)             \n\
             # zwrocony wynik zapisany w rest                                            \n\
             pushl 12(%ebp)                                                              \n\
             pushl -8(%ebp)                                                              \n\
@@ -83,10 +128,10 @@ asm("\
     "
 );
 
-// Implementacja funkcji multiplicationModulo
+// Implementacja funkcji multiplicationModuloMR
 asm("\
-        .global _multiplicationModulo                                                   \n\
-        _multiplicationModulo:                                                          \n\
+        .global _multiplicationModuloMR                                                 \n\
+        _multiplicationModuloMR:                                                        \n\
         pushl %ebp                  # zabezpieczenie starego %ebp                       \n\
         movl %esp, %ebp             # nowy %ebp zawiera aktualny wsk. stosu             \n\
                                                                                         \n\
@@ -145,3 +190,4 @@ asm("\
         ret                         # powrot z funkcji                                  \n\
         "
 );
+
